@@ -82,8 +82,14 @@
 
         <!-- Section: Gestione Foto -->
         <div class="space-y-4">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-purple-700 border-b border-slate-200 pb-1 flex items-center gap-1">
-            <ImageIcon class="w-4 h-4" /> Foto Immobili (Facebook / Chat / Screenshot)
+          <h3 class="text-xs font-bold uppercase tracking-wider text-purple-700 border-b border-slate-200 pb-1 flex items-center justify-between">
+            <span class="flex items-center gap-1">
+              <ImageIcon class="w-4 h-4" /> Foto Immobili (Facebook / Chat / Screenshot)
+            </span>
+            <span v-if="isCompressing" class="text-[11px] font-bold text-purple-600 flex items-center gap-1">
+              <span class="w-3 h-3 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></span>
+              Ottimizzazione foto in corso...
+            </span>
           </h3>
 
           <div class="space-y-3">
@@ -398,7 +404,8 @@
           </button>
           <button
             type="submit"
-            class="px-5 py-2 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition"
+            :disabled="isCompressing"
+            class="px-5 py-2 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition disabled:opacity-50"
           >
             {{ initialData ? 'Salva Modifiche' : 'Crea Annuncio' }}
           </button>
@@ -431,6 +438,7 @@ const WORKSPACE_TYPES: WorkspaceType[] = ['Scrivania dedicata', 'Tavolo grande',
 const PARKING_TYPES: ParkingType[] = ['Posto auto riservato', 'Box / Garage privato', 'Parcheggio libero in strada', 'Parcheggio a pagamento', 'Nessun parcheggio'];
 
 const imageUrlInput = ref('');
+const isCompressing = ref(false);
 
 const getBarColor = (score: number) => {
   if (score <= 2) return 'bg-rose-500';
@@ -531,20 +539,62 @@ const handleAddImageUrl = () => {
   imageUrlInput.value = '';
 };
 
-const handleFileUpload = (e: Event) => {
-  const files = (e.target as HTMLInputElement).files;
-  if (!files || files.length === 0) return;
-
-  Array.from(files).forEach((file) => {
+// Client-side Canvas Image Compression (~90% size reduction per photo)
+const compressImage = (file: File, maxWidth = 1200, maxHeight = 1200, quality = 0.8): Promise<string> => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === 'string') {
-        if (!formData.images) formData.images = [];
-        formData.images.push(reader.result);
-      }
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        } else {
+          resolve(e.target?.result as string);
+        }
+      };
+      img.src = e.target?.result as string;
     };
     reader.readAsDataURL(file);
   });
+};
+
+const handleFileUpload = async (e: Event) => {
+  const files = (e.target as HTMLInputElement).files;
+  if (!files || files.length === 0) return;
+
+  isCompressing.value = true;
+  try {
+    for (const file of Array.from(files)) {
+      const compressed = await compressImage(file);
+      if (!formData.images) formData.images = [];
+      formData.images.push(compressed);
+    }
+  } catch (err) {
+    console.error('Image compression error:', err);
+  } finally {
+    isCompressing.value = false;
+  }
 };
 
 const handleRemoveImage = (index: number) => {
