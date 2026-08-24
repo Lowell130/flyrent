@@ -46,6 +46,9 @@ class RentalBase(BaseModel):
     wifiType: str = "Wi-Fi da verificare"  # Fibra FTTH, FTTC, FWA, Wi-Fi da verificare, Assente
     workspaceType: str = "Tavolo grande"  # Scrivania dedicata, Tavolo grande, Nessuna
     parkingType: str = "Parcheggio libero in strada"  # Posto auto riservato, Box / Garage privato, Parcheggio libero in strada, Parcheggio a pagamento, Nessun parcheggio
+    ratingNeighborhood: int = Field(default=3, ge=1, le=5)  # Gradimento Quartiere/Zona (1-5)
+    ratingServices: int = Field(default=3, ge=1, le=5)      # Vicinanza Servizi & Supermercati (1-5)
+    ratingTransport: int = Field(default=3, ge=1, le=5)     # Vicinanza Stazione/Aeroporto (1-5)
     availablePeriod: Optional[str] = ""
     contactName: Optional[str] = ""
     contactPhone: Optional[str] = ""
@@ -71,6 +74,9 @@ class RentalUpdate(BaseModel):
     wifiType: Optional[str] = None
     workspaceType: Optional[str] = None
     parkingType: Optional[str] = None
+    ratingNeighborhood: Optional[int] = None
+    ratingServices: Optional[int] = None
+    ratingTransport: Optional[int] = None
     availablePeriod: Optional[str] = None
     contactName: Optional[str] = None
     contactPhone: Optional[str] = None

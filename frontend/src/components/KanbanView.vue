@@ -43,21 +43,29 @@
               </span>
             </div>
 
-            <!-- Top Bar: Platform + Link -->
+            <!-- Top Bar: Platform + Link + Score Badge -->
             <div class="flex items-center justify-between mb-2">
               <span :class="['text-[10px] font-bold px-2.5 py-0.5 rounded-full border', getPlatformBadge(rental.platform)]">
                 {{ rental.platform }}
               </span>
-              <a
-                v-if="rental.url"
-                :href="rental.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-slate-400 hover:text-indigo-600 transition p-1"
-                title="Apri link originale"
-              >
-                <ExternalLink class="w-3.5 h-3.5" />
-              </a>
+              
+              <div class="flex items-center gap-1.5">
+                <div class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-bold">
+                  <Star class="w-3 h-3 text-amber-500 fill-amber-500" />
+                  <span>{{ calculateAvgRating(rental) }}</span>
+                </div>
+
+                <a
+                  v-if="rental.url"
+                  :href="rental.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-slate-400 hover:text-indigo-600 transition p-1"
+                  title="Apri link originale"
+                >
+                  <ExternalLink class="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
 
             <!-- Title & City -->
@@ -87,6 +95,22 @@
             <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg border border-amber-200 bg-amber-50/80 text-amber-800 text-[11px] mb-3">
               <Car class="w-3 h-3 text-amber-600 shrink-0" />
               <span class="truncate font-semibold">{{ rental.parkingType || 'Parcheggio libero in strada' }}</span>
+            </div>
+
+            <!-- Scoreboard Details (Quartiere, Servizi, Trasporti) -->
+            <div class="bg-amber-50/40 rounded-xl p-2 border border-amber-200/60 mb-3 text-[10px] text-slate-600 space-y-0.5">
+              <div class="flex justify-between items-center">
+                <span>🏡 Quartiere / Zona:</span>
+                <span class="font-bold text-amber-700">{{ rental.ratingNeighborhood || 3 }}/5 ⭐</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span>🛒 Servizi / Supermercati:</span>
+                <span class="font-bold text-amber-700">{{ rental.ratingServices || 3 }}/5 ⭐</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span>🚉 Stazione / Trasporti:</span>
+                <span class="font-bold text-amber-700">{{ rental.ratingTransport || 3 }}/5 ⭐</span>
+              </div>
             </div>
 
             <!-- Price Breakdown -->
@@ -169,7 +193,7 @@
 import { ref } from 'vue';
 import { Rental, StatusType } from '../types/rental';
 import ImageGalleryModal from './ImageGalleryModal.vue';
-import { Wifi, Laptop, MapPin, ExternalLink, MessageSquare, Edit, Trash2, Calendar, Image as ImageIcon, Car } from 'lucide-vue-next';
+import { Wifi, Laptop, MapPin, ExternalLink, MessageSquare, Edit, Trash2, Calendar, Image as ImageIcon, Car, Star } from 'lucide-vue-next';
 
 const props = defineProps<{
   rentals: Rental[];
@@ -190,6 +214,13 @@ const COLUMNS: { id: StatusType; title: string; borderColor: string; badgeBg: st
 const galleryImages = ref<string[]>([]);
 const galleryTitle = ref('');
 const isGalleryOpen = ref(false);
+
+const calculateAvgRating = (rental: Rental) => {
+  const n = rental.ratingNeighborhood ?? 3;
+  const s = rental.ratingServices ?? 3;
+  const t = rental.ratingTransport ?? 3;
+  return ((n + s + t) / 3).toFixed(1);
+};
 
 const getColRentals = (colId: StatusType) => {
   return props.rentals.filter((r) => r.status === colId);

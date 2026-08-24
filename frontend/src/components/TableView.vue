@@ -16,6 +16,7 @@
                   Città / Zona <ArrowUpDown class="w-3 h-3" />
                 </div>
               </th>
+              <th class="px-4 py-3.5">Score Zona</th>
               <th class="px-4 py-3.5 cursor-pointer hover:text-slate-900" @click="handleSort('monthlyPrice')">
                 <div class="flex items-center gap-1">
                   Canone / Mese <ArrowUpDown class="w-3 h-3" />
@@ -34,7 +35,7 @@
           </thead>
           <tbody class="divide-y divide-slate-100">
             <tr v-if="sortedRentals.length === 0">
-              <td colspan="9" class="px-4 py-8 text-center text-slate-400">
+              <td colspan="10" class="px-4 py-8 text-center text-slate-400">
                 Nessun annuncio trovato.
               </td>
             </tr>
@@ -86,6 +87,19 @@
                   {{ rental.city }}
                 </div>
                 <div v-if="rental.address" class="text-xs text-slate-400 truncate">{{ rental.address }}</div>
+              </td>
+
+              <!-- Scoreboard Zona (Gradimento, Servizi, Trasporti) -->
+              <td class="px-4 py-3.5">
+                <div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 font-bold text-xs">
+                  <Star class="w-3.5 h-3.5 text-amber-500 fill-amber-500 shrink-0" />
+                  <span>{{ calculateAvgRating(rental) }}</span>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-1 space-y-0.5">
+                  <div>🏡 Quartiere: <span class="font-semibold text-slate-700">{{ rental.ratingNeighborhood || 3 }}/5</span></div>
+                  <div>🛒 Servizi: <span class="font-semibold text-slate-700">{{ rental.ratingServices || 3 }}/5</span></div>
+                  <div>🚉 Trasporti: <span class="font-semibold text-slate-700">{{ rental.ratingTransport || 3 }}/5</span></div>
+                </div>
               </td>
 
               <!-- Canone, Utenze e Condominio -->
@@ -187,7 +201,7 @@
 import { ref, computed } from 'vue';
 import { Rental, StatusType } from '../types/rental';
 import ImageGalleryModal from './ImageGalleryModal.vue';
-import { ExternalLink, Edit, Trash2, MessageSquare, Wifi, Laptop, MapPin, ArrowUpDown, Image as ImageIcon, Car } from 'lucide-vue-next';
+import { ExternalLink, Edit, Trash2, MessageSquare, Wifi, Laptop, MapPin, ArrowUpDown, Image as ImageIcon, Car, Star } from 'lucide-vue-next';
 
 const props = defineProps<{
   rentals: Rental[];
@@ -204,6 +218,13 @@ const sortAsc = ref(false);
 const galleryImages = ref<string[]>([]);
 const galleryTitle = ref('');
 const isGalleryOpen = ref(false);
+
+const calculateAvgRating = (rental: Rental) => {
+  const n = rental.ratingNeighborhood ?? 3;
+  const s = rental.ratingServices ?? 3;
+  const t = rental.ratingTransport ?? 3;
+  return ((n + s + t) / 3).toFixed(1);
+};
 
 const handleSort = (field: keyof Rental) => {
   if (sortField.value === field) {

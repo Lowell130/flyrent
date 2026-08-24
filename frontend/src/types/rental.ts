@@ -23,6 +23,9 @@ export interface Rental {
   wifiType: WifiType;
   workspaceType: WorkspaceType;
   parkingType: ParkingType;
+  ratingNeighborhood?: number;
+  ratingServices?: number;
+  ratingTransport?: number;
   availablePeriod?: string;
   contactName?: string;
   contactPhone?: string;
@@ -48,6 +51,9 @@ export interface RentalFormData {
   wifiType: WifiType;
   workspaceType: WorkspaceType;
   parkingType: ParkingType;
+  ratingNeighborhood?: number;
+  ratingServices?: number;
+  ratingTransport?: number;
   availablePeriod?: string;
   contactName?: string;
   contactPhone?: string;

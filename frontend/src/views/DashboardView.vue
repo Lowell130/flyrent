@@ -107,6 +107,17 @@
             <Car class="w-3.5 h-3.5" />
             Solo Posto Auto / Box
           </button>
+
+          <button
+            @click="onlyTopRated = !onlyTopRated"
+            :class="[
+              'px-3 py-1.5 rounded-xl font-bold border transition flex items-center gap-1.5',
+              onlyTopRated ? 'bg-amber-500 text-white border-amber-500 shadow-sm' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+            ]"
+          >
+            <Star class="w-3.5 h-3.5 fill-current" />
+            Top Gradimento (⭐ 4+)
+          </button>
         </div>
 
         <div class="flex items-center gap-2">
@@ -209,7 +220,7 @@ import RentalModal from '../components/RentalModal.vue';
 import QuickMessageModal from '../components/QuickMessageModal.vue';
 import { Rental, StatusType } from '../types/rental';
 import { api } from '../services/api';
-import { Building, Sparkles, Euro, Wifi, Laptop, Filter, Car } from 'lucide-vue-next';
+import { Building, Sparkles, Euro, Wifi, Laptop, Filter, Car, Star } from 'lucide-vue-next';
 
 const router = useRouter();
 
@@ -225,6 +236,7 @@ const user = ref<any>(null);
 const onlyFibra = ref(false);
 const onlyWorkspace = ref(false);
 const onlyParking = ref(false);
+const onlyTopRated = ref(false);
 const maxPriceFilter = ref(0);
 
 const hasToken = computed(() => !!localStorage.getItem('token'));
@@ -302,6 +314,12 @@ const filteredRentals = computed(() => {
     if (onlyFibra.value && !r.wifiType?.includes('Fibra')) return false;
     if (onlyWorkspace.value && (!r.workspaceType || r.workspaceType.includes('Nessuna'))) return false;
     if (onlyParking.value && (!r.parkingType || r.parkingType.includes('Nessun') || r.parkingType.includes('pagamento'))) return false;
+    
+    if (onlyTopRated.value) {
+      const avg = ((r.ratingNeighborhood ?? 3) + (r.ratingServices ?? 3) + (r.ratingTransport ?? 3)) / 3;
+      if (avg < 4.0) return false;
+    }
+
     if (maxPriceFilter.value > 0 && r.monthlyPrice > maxPriceFilter.value) return false;
     return true;
   });
