@@ -1,200 +1,184 @@
 <template>
   <div>
     <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm my-4 w-full">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-slate-700">
-          <thead class="bg-slate-50 text-slate-500 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
-            <tr>
-              <th class="px-4 py-3.5">Foto</th>
-              <th class="px-4 py-3.5 cursor-pointer hover:text-slate-900" @click="handleSort('title')">
-                <div class="flex items-center gap-1">
-                  Annuncio <ArrowUpDown class="w-3 h-3" />
-                </div>
-              </th>
-              <th class="px-4 py-3.5 cursor-pointer hover:text-slate-900" @click="handleSort('city')">
-                <div class="flex items-center gap-1">
-                  Città / Zona <ArrowUpDown class="w-3 h-3" />
-                </div>
-              </th>
-              <th class="px-4 py-3.5 text-center">Score Zona</th>
-              <th class="px-4 py-3.5 cursor-pointer hover:text-slate-900" @click="handleSort('monthlyPrice')">
-                <div class="flex items-center gap-1">
-                  Canone / Mese <ArrowUpDown class="w-3 h-3" />
-                </div>
-              </th>
-              <th class="px-4 py-3.5">Stima 2 Mesi</th>
-              <th class="px-4 py-3.5">Internet, Work & Auto</th>
-              <th class="px-4 py-3.5 cursor-pointer hover:text-slate-900" @click="handleSort('status')">
-                <div class="flex items-center gap-1">
-                  Stato Trattativa <ArrowUpDown class="w-3 h-3" />
-                </div>
-              </th>
-              <th class="px-4 py-3.5">Referente</th>
-              <th class="px-4 py-3.5 text-right">Azioni</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-if="sortedRentals.length === 0">
-              <td colspan="10" class="px-4 py-8 text-center text-slate-400">
-                Nessun annuncio trovato.
-              </td>
-            </tr>
-            <tr v-else v-for="rental in sortedRentals" :key="rental._id" class="hover:bg-slate-50/80 transition">
-              
-              <!-- Photo Thumbnail -->
-              <td class="px-4 py-3.5 w-16">
+      <table class="w-full text-left text-sm text-slate-700 table-auto border-collapse">
+        <thead class="bg-slate-50/90 text-slate-500 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+          <tr>
+            <th class="px-3 py-3 w-14">Foto</th>
+            <th class="px-3 py-3 cursor-pointer hover:text-slate-900" @click="handleSort('title')">
+              <div class="flex items-center gap-1">
+                Annuncio & Località <ArrowUpDown class="w-3 h-3" />
+              </div>
+            </th>
+            <th class="px-3 py-3 text-center cursor-pointer hover:text-slate-900" @click="handleSort('monthlyPrice')">
+              <div class="flex items-center justify-center gap-1">
+                Prezzo & Stima 2M <ArrowUpDown class="w-3 h-3" />
+              </div>
+            </th>
+            <th class="px-3 py-3 text-center">Score Zona</th>
+            <th class="px-3 py-3">Internet & Auto</th>
+            <th class="px-3 py-3 cursor-pointer hover:text-slate-900" @click="handleSort('status')">
+              <div class="flex items-center gap-1">
+                Stato Trattativa <ArrowUpDown class="w-3 h-3" />
+              </div>
+            </th>
+            <th class="px-3 py-3">Referente</th>
+            <th class="px-3 py-3 text-right">Azioni</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr v-if="sortedRentals.length === 0">
+            <td colspan="8" class="px-4 py-8 text-center text-slate-400">
+              Nessun annuncio trovato.
+            </td>
+          </tr>
+          <tr v-else v-for="rental in sortedRentals" :key="rental._id" class="hover:bg-slate-50/80 transition">
+            
+            <!-- Foto Thumbnail -->
+            <td class="px-3 py-3 w-14">
+              <button
+                v-if="rental.images && rental.images.length > 0"
+                @click="openGallery(rental.images, rental.title)"
+                class="relative group w-11 h-11 rounded-xl overflow-hidden border border-slate-200 shadow-sm block focus:outline-none focus:ring-2 focus:ring-indigo-500 shrink-0"
+                title="Visualizza foto"
+              >
+                <img :src="rental.images[0]" :alt="rental.title" class="w-full h-full object-cover group-hover:scale-110 transition duration-200" />
+                <span v-if="rental.images.length > 1" class="absolute bottom-0.5 right-0.5 bg-black/75 text-white text-[9px] font-bold px-1 rounded">
+                  +{{ rental.images.length - 1 }}
+                </span>
+              </button>
+              <div v-else class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shrink-0" title="Nessuna foto">
+                <ImageIcon class="w-4 h-4 opacity-40" />
+              </div>
+            </td>
+
+            <!-- Annuncio & Località -->
+            <td class="px-3 py-3 max-w-[220px]">
+              <div class="font-bold text-slate-900 text-xs sm:text-sm truncate hover:text-indigo-600">
+                {{ rental.title }}
+              </div>
+
+              <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                <MapPin class="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                <span class="font-semibold text-slate-800 truncate">{{ rental.city }}</span>
+                <span v-if="rental.address" class="text-slate-400 truncate text-[11px]">({{ rental.address }})</span>
+              </div>
+
+              <div class="flex items-center gap-2 mt-1">
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700">
+                  {{ rental.platform }}
+                </span>
+                <a
+                  v-if="rental.url"
+                  :href="rental.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-slate-400 hover:text-indigo-600 text-[11px] flex items-center gap-0.5"
+                >
+                  <ExternalLink class="w-3 h-3" /> Link
+                </a>
+              </div>
+            </td>
+
+            <!-- Prezzo Mensile & Stima 2 Mesi (Combinato) -->
+            <td class="px-3 py-3 text-center">
+              <div class="font-black text-emerald-600 text-sm">
+                {{ rental.monthlyPrice }}€ <span class="text-[10px] text-slate-400 font-medium">/mese</span>
+              </div>
+              <div class="text-[11px] font-bold text-slate-900 mt-0.5">
+                Stima 2M: {{ (rental.monthlyPrice + (rental.utilitiesPriceEstimate || 0) + (rental.condoFeesPriceEstimate || 0)) * 2 }}€
+              </div>
+              <div class="text-[10px] text-slate-400">
+                Ut.: {{ rental.utilities }} • Cond.: {{ rental.condoFees || 'Escluse' }}
+              </div>
+            </td>
+
+            <!-- Scoreboard Zona Pulito -->
+            <td class="px-3 py-3 text-center">
+              <div
+                :title="`🏡 Quartiere: ${rental.ratingNeighborhood || 3}/5 | 🛒 Servizi: ${rental.ratingServices || 3}/5 | 🚉 Trasporti: ${rental.ratingTransport || 3}/5`"
+                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-white font-black text-xs shadow-sm cursor-help transition hover:scale-105"
+                :class="getScoreBadgeBg(Number(calculateAvgRating(rental)))"
+              >
+                <BarChart2 class="w-3 h-3 shrink-0 opacity-90" />
+                <span>{{ calculateAvgRating(rental) }}</span>
+                <span class="text-[10px] font-normal opacity-80">/5</span>
+              </div>
+              <div class="text-[10px] font-semibold text-slate-500 mt-0.5">
+                {{ getScoreLabel(Number(calculateAvgRating(rental))) }}
+              </div>
+            </td>
+
+            <!-- Internet, Work & Auto (Inline Compact) -->
+            <td class="px-3 py-3 text-xs">
+              <div class="flex items-center gap-1 text-slate-800 font-semibold truncate">
+                <Wifi class="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span class="truncate">{{ rental.wifiType }}</span>
+              </div>
+              <div class="flex items-center gap-1 text-slate-500 mt-0.5 truncate">
+                <Laptop class="w-3.5 h-3.5 shrink-0 text-cyan-600" />
+                <span class="truncate">{{ rental.workspaceType }}</span>
+              </div>
+              <div class="flex items-center gap-1 text-slate-500 mt-0.5 truncate">
+                <Car class="w-3.5 h-3.5 shrink-0 text-amber-600" />
+                <span class="truncate text-[11px]">{{ rental.parkingType || 'Parcheggio libero' }}</span>
+              </div>
+            </td>
+
+            <!-- Stato Trattativa -->
+            <td class="px-3 py-3">
+              <select
+                :value="rental.status"
+                @change="$emit('statusChange', rental._id, ($event.target as HTMLSelectElement).value)"
+                class="bg-slate-50 border border-slate-300 text-xs font-semibold rounded-lg px-2 py-1 text-slate-800 focus:ring-2 focus:ring-indigo-500 max-w-[130px]"
+              >
+                <option v-for="s in STATUSES" :key="s" :value="s">{{ s }}</option>
+              </select>
+            </td>
+
+            <!-- Referente -->
+            <td class="px-3 py-3 text-xs max-w-[110px]">
+              <div class="font-semibold text-slate-800 truncate">{{ rental.contactName || '-' }}</div>
+              <div class="text-slate-400 text-[11px] truncate">{{ rental.contactPhone || '-' }}</div>
+            </td>
+
+            <!-- Azioni (Compatte) -->
+            <td class="px-3 py-3 text-right">
+              <div class="flex items-center justify-end gap-1">
                 <button
-                  v-if="rental.images && rental.images.length > 0"
-                  @click="openGallery(rental.images, rental.title)"
-                  class="relative group w-12 h-12 rounded-xl overflow-hidden border border-slate-200 shadow-sm block focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  title="Visualizza foto"
+                  @click="$emit('openMap', rental)"
+                  class="p-1.5 hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 rounded-lg transition"
+                  title="Apri Mappa & Servizi Zona"
                 >
-                  <img :src="rental.images[0]" :alt="rental.title" class="w-full h-full object-cover group-hover:scale-110 transition duration-200" />
-                  <span v-if="rental.images.length > 1" class="absolute bottom-0.5 right-0.5 bg-black/75 text-white text-[9px] font-bold px-1 rounded">
-                    +{{ rental.images.length - 1 }}
-                  </span>
+                  <Compass class="w-4 h-4" />
                 </button>
-                <div v-else class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400" title="Nessuna foto">
-                  <ImageIcon class="w-5 h-5 opacity-40" />
-                </div>
-              </td>
-
-              <!-- Annuncio & Platform -->
-              <td class="px-4 py-3.5 max-w-xs">
-                <div class="font-bold text-slate-900 truncate hover:text-indigo-600">
-                  {{ rental.title }}
-                </div>
-                <div class="flex items-center gap-2 mt-1">
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700">
-                    {{ rental.platform }}
-                  </span>
-                  <a
-                    v-if="rental.url"
-                    :href="rental.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-slate-400 hover:text-indigo-600 text-xs flex items-center gap-0.5"
-                  >
-                    <ExternalLink class="w-3 h-3" /> Link
-                  </a>
-                </div>
-              </td>
-
-              <!-- Città -->
-              <td class="px-4 py-3.5">
-                <div class="flex items-center gap-1 font-semibold text-slate-800">
-                  <MapPin class="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                  {{ rental.city }}
-                </div>
-                <div v-if="rental.address" class="text-xs text-slate-400 truncate">{{ rental.address }}</div>
-              </td>
-
-              <!-- Scoreboard Zona Pulito e Immediato -->
-              <td class="px-4 py-3.5 text-center">
-                <div
-                  :title="`🏡 Quartiere: ${rental.ratingNeighborhood || 3}/5 | 🛒 Servizi: ${rental.ratingServices || 3}/5 | 🚉 Trasporti: ${rental.ratingTransport || 3}/5`"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white font-black text-xs shadow-sm cursor-help transition hover:scale-105"
-                  :class="getScoreBadgeBg(Number(calculateAvgRating(rental)))"
+                <button
+                  @click="$emit('openQuickMessage', rental)"
+                  class="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-lg transition"
+                  title="Genera messaggio WhatsApp"
                 >
-                  <BarChart2 class="w-3.5 h-3.5 shrink-0 opacity-90" />
-                  <span>{{ calculateAvgRating(rental) }}</span>
-                  <span class="text-[10px] font-normal opacity-80">/5</span>
-                </div>
-                <div class="text-[10px] font-semibold text-slate-500 mt-1">
-                  {{ getScoreLabel(Number(calculateAvgRating(rental))) }}
-                </div>
-              </td>
-
-              <!-- Canone, Utenze e Condominio -->
-              <td class="px-4 py-3.5 font-bold text-emerald-600">
-                {{ rental.monthlyPrice }}€
-                <div class="text-[11px] font-normal text-slate-400">
-                  Ut.: {{ rental.utilities }} {{ rental.utilitiesPriceEstimate > 0 ? `(+${rental.utilitiesPriceEstimate}€)` : '' }}
-                </div>
-                <div class="text-[11px] font-normal text-slate-400">
-                  Cond.: {{ rental.condoFees || 'Escluse' }} {{ rental.condoFeesPriceEstimate > 0 ? `(+${rental.condoFeesPriceEstimate}€)` : '' }}
-                </div>
-              </td>
-
-              <!-- Stima 2 Mesi -->
-              <td class="px-4 py-3.5">
-                <div class="font-black text-slate-900">
-                  {{ (rental.monthlyPrice + (rental.utilitiesPriceEstimate || 0) + (rental.condoFeesPriceEstimate || 0)) * 2 }}€
-                </div>
-                <div v-if="rental.deposit > 0" class="text-[11px] text-slate-400">+ Caparra {{ rental.deposit }}€</div>
-              </td>
-
-              <!-- Internet, Work & Parking -->
-              <td class="px-4 py-3.5">
-                <div class="flex items-center gap-1 text-xs text-slate-800 font-semibold">
-                  <Wifi class="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span class="truncate">{{ rental.wifiType }}</span>
-                </div>
-                <div class="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
-                  <Laptop class="w-3.5 h-3.5 shrink-0 text-cyan-600" />
-                  <span class="truncate">{{ rental.workspaceType }}</span>
-                </div>
-                <div class="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
-                  <Car class="w-3.5 h-3.5 shrink-0 text-amber-600" />
-                  <span class="truncate">{{ rental.parkingType || 'Parcheggio libero in strada' }}</span>
-                </div>
-              </td>
-
-              <!-- Stato Trattativa -->
-              <td class="px-4 py-3.5">
-                <select
-                  :value="rental.status"
-                  @change="$emit('statusChange', rental._id, ($event.target as HTMLSelectElement).value)"
-                  class="bg-slate-50 border border-slate-300 text-xs font-semibold rounded-lg px-2.5 py-1 text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                  <MessageSquare class="w-4 h-4" />
+                </button>
+                <button
+                  @click="$emit('edit', rental)"
+                  class="p-1.5 hover:bg-slate-100 text-slate-500 hover:text-slate-900 rounded-lg transition"
+                  title="Modifica"
                 >
-                  <option v-for="s in STATUSES" :key="s" :value="s">{{ s }}</option>
-                </select>
-              </td>
+                  <Edit class="w-4 h-4" />
+                </button>
+                <button
+                  @click="$emit('delete', rental._id)"
+                  class="p-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition"
+                  title="Elimina"
+                >
+                  <Trash2 class="w-4 h-4" />
+                </button>
+              </div>
+            </td>
 
-              <!-- Referente -->
-              <td class="px-4 py-3.5 text-xs">
-                <div class="font-semibold text-slate-800">{{ rental.contactName || '-' }}</div>
-                <div class="text-slate-400">{{ rental.contactPhone || '-' }}</div>
-              </td>
-
-              <!-- Azioni -->
-              <td class="px-4 py-3.5 text-right">
-                <div class="flex items-center justify-end gap-1">
-                  <button
-                    @click="$emit('openMap', rental)"
-                    class="p-1.5 hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 rounded-lg transition"
-                    title="Apri Mappa & Mappa Servizi Zona"
-                  >
-                    <Compass class="w-4 h-4" />
-                  </button>
-                  <button
-                    @click="$emit('openQuickMessage', rental)"
-                    class="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-lg transition"
-                    title="Genera messaggio WhatsApp"
-                  >
-                    <MessageSquare class="w-4 h-4" />
-                  </button>
-                  <button
-                    @click="$emit('edit', rental)"
-                    class="p-1.5 hover:bg-slate-100 text-slate-500 hover:text-slate-900 rounded-lg transition"
-                    title="Modifica"
-                  >
-                    <Edit class="w-4 h-4" />
-                  </button>
-                  <button
-                    @click="$emit('delete', rental._id)"
-                    class="p-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition"
-                    title="Elimina"
-                  >
-                    <Trash2 class="w-4 h-4" />
-                  </button>
-                </div>
-              </td>
-
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Gallery Modal -->
