@@ -181,6 +181,7 @@
           @edit="openEditModal"
           @delete="handleDelete"
           @openQuickMessage="openQuickMessage"
+          @openMap="openMapModal"
         />
         <KanbanView
           v-else
@@ -189,6 +190,7 @@
           @edit="openEditModal"
           @delete="handleDelete"
           @openQuickMessage="openQuickMessage"
+          @openMap="openMapModal"
         />
       </template>
 
@@ -207,6 +209,12 @@
       @close="quickMessageRental = null"
     />
 
+    <MapViewModal
+      :isOpen="!!mapRental"
+      :rental="mapRental"
+      @close="mapRental = null"
+    />
+
   </div>
 </template>
 
@@ -218,6 +226,7 @@ import TableView from '../components/TableView.vue';
 import KanbanView from '../components/KanbanView.vue';
 import RentalModal from '../components/RentalModal.vue';
 import QuickMessageModal from '../components/QuickMessageModal.vue';
+import MapViewModal from '../components/MapViewModal.vue';
 import { Rental, StatusType } from '../types/rental';
 import { api } from '../services/api';
 import { Building, Sparkles, Euro, Wifi, Laptop, Filter, Car, Star } from 'lucide-vue-next';
@@ -245,6 +254,7 @@ const hasToken = computed(() => !!localStorage.getItem('token'));
 const isRentalModalOpen = ref(false);
 const editingRental = ref<Rental | null>(null);
 const quickMessageRental = ref<Rental | null>(null);
+const mapRental = ref<Rental | null>(null);
 
 const fetchUser = async () => {
   const storedUser = localStorage.getItem('user');
@@ -349,6 +359,10 @@ const openEditModal = (rental: Rental) => {
 
 const openQuickMessage = (rental: Rental) => {
   quickMessageRental.value = rental;
+};
+
+const openMapModal = (rental: Rental) => {
+  mapRental.value = rental;
 };
 
 const handleCreateOrUpdate = async (formData: any) => {

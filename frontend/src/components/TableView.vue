@@ -161,6 +161,13 @@
               <td class="px-4 py-3.5 text-right">
                 <div class="flex items-center justify-end gap-1">
                   <button
+                    @click="$emit('openMap', rental)"
+                    class="p-1.5 hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 rounded-lg transition"
+                    title="Apri Mappa & Mappa Servizi Zona"
+                  >
+                    <Compass class="w-4 h-4" />
+                  </button>
+                  <button
                     @click="$emit('openQuickMessage', rental)"
                     class="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-lg transition"
                     title="Genera messaggio WhatsApp"
@@ -204,13 +211,13 @@
 import { ref, computed } from 'vue';
 import { Rental, StatusType } from '../types/rental';
 import ImageGalleryModal from './ImageGalleryModal.vue';
-import { ExternalLink, Edit, Trash2, MessageSquare, Wifi, Laptop, MapPin, ArrowUpDown, Image as ImageIcon, Car, BarChart2 } from 'lucide-vue-next';
+import { ExternalLink, Edit, Trash2, MessageSquare, Wifi, Laptop, MapPin, ArrowUpDown, Image as ImageIcon, Car, BarChart2, Compass } from 'lucide-vue-next';
 
 const props = defineProps<{
   rentals: Rental[];
 }>();
 
-defineEmits(['statusChange', 'edit', 'delete', 'openQuickMessage']);
+defineEmits(['statusChange', 'edit', 'delete', 'openQuickMessage', 'openMap']);
 
 const STATUSES: StatusType[] = ['Bozza', 'Contattato', 'In Attesa', 'Visita/Videochiamata', 'Opzionato', 'Scartato', 'Confermato'];
 

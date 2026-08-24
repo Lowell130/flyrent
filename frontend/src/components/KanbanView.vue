@@ -76,10 +76,17 @@
               {{ rental.title }}
             </h4>
 
-            <div class="flex items-center gap-1 text-xs text-slate-500 mb-3">
-              <MapPin class="w-3.5 h-3.5 text-rose-500 shrink-0" />
-              <span class="truncate font-medium text-slate-700">{{ rental.city }}</span>
-              <span v-if="rental.address" class="truncate text-slate-400">({{ rental.address }})</span>
+            <div class="flex items-center justify-between gap-1 text-xs text-slate-500 mb-3">
+              <div class="flex items-center gap-1 truncate">
+                <MapPin class="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                <span class="truncate font-medium text-slate-700">{{ rental.city }}</span>
+              </div>
+              <button
+                @click="$emit('openMap', rental)"
+                class="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 px-2 py-0.5 rounded-md transition flex items-center gap-1 shrink-0"
+              >
+                <Compass class="w-3 h-3" /> Mappa Servizi
+              </button>
             </div>
 
             <!-- Smart Work & Parking Features -->
@@ -180,13 +187,13 @@
 import { ref } from 'vue';
 import { Rental, StatusType } from '../types/rental';
 import ImageGalleryModal from './ImageGalleryModal.vue';
-import { Wifi, Laptop, MapPin, ExternalLink, MessageSquare, Edit, Trash2, Calendar, Image as ImageIcon, Car, BarChart2 } from 'lucide-vue-next';
+import { Wifi, Laptop, MapPin, ExternalLink, MessageSquare, Edit, Trash2, Calendar, Image as ImageIcon, Car, BarChart2, Compass } from 'lucide-vue-next';
 
 const props = defineProps<{
   rentals: Rental[];
 }>();
 
-defineEmits(['statusChange', 'edit', 'delete', 'openQuickMessage']);
+defineEmits(['statusChange', 'edit', 'delete', 'openQuickMessage', 'openMap']);
 
 const COLUMNS: { id: StatusType; title: string; borderColor: string; badgeBg: string; badgeText: string }[] = [
   { id: 'Bozza', title: 'Bozza', borderColor: 'border-slate-300', badgeBg: 'bg-slate-100', badgeText: 'text-slate-700' },
