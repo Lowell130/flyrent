@@ -50,9 +50,9 @@
               </span>
               
               <div class="flex items-center gap-1.5">
-                <div class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-bold">
-                  <Star class="w-3 h-3 text-amber-500 fill-amber-500" />
-                  <span>{{ calculateAvgRating(rental) }}</span>
+                <div :class="['inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md text-white text-[10px] font-bold shadow-sm', getBarColor(Number(calculateAvgRating(rental)))]">
+                  <BarChart2 class="w-3 h-3" />
+                  <span>{{ calculateAvgRating(rental) }} / 5</span>
                 </div>
 
                 <a
@@ -97,19 +97,36 @@
               <span class="truncate font-semibold">{{ rental.parkingType || 'Parcheggio libero in strada' }}</span>
             </div>
 
-            <!-- Scoreboard Details (Quartiere, Servizi, Trasporti) -->
-            <div class="bg-amber-50/40 rounded-xl p-2 border border-amber-200/60 mb-3 text-[10px] text-slate-600 space-y-0.5">
-              <div class="flex justify-between items-center">
-                <span>🏡 Quartiere / Zona:</span>
-                <span class="font-bold text-amber-700">{{ rental.ratingNeighborhood || 3 }}/5 ⭐</span>
+            <!-- Scoreboard Details con Barre Colorate -->
+            <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-200/80 mb-3 text-[10px] space-y-1.5">
+              <div>
+                <div class="flex justify-between items-center mb-0.5">
+                  <span class="text-slate-500 font-medium">🏡 Quartiere / Zona:</span>
+                  <span class="font-bold text-slate-700">{{ rental.ratingNeighborhood || 3 }}/5</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div :class="['h-full rounded-full transition-all', getBarColor(rental.ratingNeighborhood || 3)]" :style="{ width: `${((rental.ratingNeighborhood || 3) / 5) * 100}%` }"></div>
+                </div>
               </div>
-              <div class="flex justify-between items-center">
-                <span>🛒 Servizi / Supermercati:</span>
-                <span class="font-bold text-amber-700">{{ rental.ratingServices || 3 }}/5 ⭐</span>
+
+              <div>
+                <div class="flex justify-between items-center mb-0.5">
+                  <span class="text-slate-500 font-medium">🛒 Servizi / Supermercati:</span>
+                  <span class="font-bold text-slate-700">{{ rental.ratingServices || 3 }}/5</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div :class="['h-full rounded-full transition-all', getBarColor(rental.ratingServices || 3)]" :style="{ width: `${((rental.ratingServices || 3) / 5) * 100}%` }"></div>
+                </div>
               </div>
-              <div class="flex justify-between items-center">
-                <span>🚉 Stazione / Trasporti:</span>
-                <span class="font-bold text-amber-700">{{ rental.ratingTransport || 3 }}/5 ⭐</span>
+
+              <div>
+                <div class="flex justify-between items-center mb-0.5">
+                  <span class="text-slate-500 font-medium">🚉 Stazione / Trasporti:</span>
+                  <span class="font-bold text-slate-700">{{ rental.ratingTransport || 3 }}/5</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div :class="['h-full rounded-full transition-all', getBarColor(rental.ratingTransport || 3)]" :style="{ width: `${((rental.ratingTransport || 3) / 5) * 100}%` }"></div>
+                </div>
               </div>
             </div>
 
@@ -193,7 +210,7 @@
 import { ref } from 'vue';
 import { Rental, StatusType } from '../types/rental';
 import ImageGalleryModal from './ImageGalleryModal.vue';
-import { Wifi, Laptop, MapPin, ExternalLink, MessageSquare, Edit, Trash2, Calendar, Image as ImageIcon, Car, Star } from 'lucide-vue-next';
+import { Wifi, Laptop, MapPin, ExternalLink, MessageSquare, Edit, Trash2, Calendar, Image as ImageIcon, Car, BarChart2 } from 'lucide-vue-next';
 
 const props = defineProps<{
   rentals: Rental[];
@@ -214,6 +231,13 @@ const COLUMNS: { id: StatusType; title: string; borderColor: string; badgeBg: st
 const galleryImages = ref<string[]>([]);
 const galleryTitle = ref('');
 const isGalleryOpen = ref(false);
+
+const getBarColor = (score: number) => {
+  if (score <= 2) return 'bg-rose-500';
+  if (score < 3.5) return 'bg-amber-500';
+  if (score < 4.5) return 'bg-emerald-500';
+  return 'bg-indigo-600';
+};
 
 const calculateAvgRating = (rental: Rental) => {
   const n = rental.ratingNeighborhood ?? 3;

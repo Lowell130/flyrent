@@ -216,7 +216,7 @@
           </div>
         </div>
 
-        <!-- Section 3: Smart Working & Servizi (Wi-Fi, Postazione & Parcheggio) -->
+        <!-- Section 3: Smart Working & Servizi -->
         <div class="space-y-4">
           <h3 class="text-xs font-bold uppercase tracking-wider text-cyan-700 border-b border-slate-200 pb-1 flex items-center gap-1">
             <Wifi class="w-4 h-4" /> 3. Smart Working & Parcheggio / Auto
@@ -255,69 +255,86 @@
           </div>
         </div>
 
-        <!-- Section 4: Scoreboard Gradimento Zona & Servizi (Voti 1-5 ⭐) -->
+        <!-- Section 4: Scoreboard Gradimento Zona con Barre Colorate -->
         <div class="space-y-4">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-amber-700 border-b border-slate-200 pb-1 flex items-center gap-1">
-            <Star class="w-4 h-4 text-amber-500" /> 4. Scoreboard Gradimento Zona & Servizi (Voti 1-5 ⭐)
+          <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-700 border-b border-slate-200 pb-1 flex items-center gap-1">
+            <BarChart2 class="w-4 h-4 text-indigo-600" /> 4. Gradimento Zona (Barre Colorate 1-5)
           </h3>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-amber-50/50 p-3 rounded-2xl border border-amber-200/80">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            
             <!-- Rating 1: Quartiere -->
-            <div>
-              <label class="block text-xs font-semibold text-slate-800 mb-1 flex items-center justify-between">
+            <div class="space-y-1.5">
+              <div class="flex justify-between items-center text-xs font-semibold text-slate-800">
                 <span>🏡 Quartiere / Zona</span>
-                <span class="font-bold text-amber-600">{{ formData.ratingNeighborhood }} / 5 ⭐</span>
-              </label>
-              <div class="flex items-center gap-1 bg-white p-1.5 rounded-xl border border-amber-200 justify-between">
+                <span :class="['px-2 py-0.5 rounded-full font-bold text-[11px] text-white', getBarColor(formData.ratingNeighborhood)]">
+                  {{ formData.ratingNeighborhood }}/5
+                </span>
+              </div>
+              <div class="grid grid-cols-5 gap-1 bg-white p-1 rounded-xl border border-slate-200">
                 <button
                   type="button"
-                  v-for="star in 5"
-                  :key="star"
-                  @click="formData.ratingNeighborhood = star"
-                  :class="['p-1 rounded-lg transition', star <= formData.ratingNeighborhood ? 'text-amber-500' : 'text-slate-300']"
+                  v-for="step in 5"
+                  :key="step"
+                  @click="formData.ratingNeighborhood = step"
+                  :class="[
+                    'h-6 rounded-lg transition-all font-bold text-[10px] flex items-center justify-center',
+                    step <= formData.ratingNeighborhood ? `${getBarColor(formData.ratingNeighborhood)} text-white` : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                  ]"
                 >
-                  <Star class="w-4 h-4 fill-current" />
+                  {{ step }}
                 </button>
               </div>
             </div>
 
             <!-- Rating 2: Servizi & Supermercati -->
-            <div>
-              <label class="block text-xs font-semibold text-slate-800 mb-1 flex items-center justify-between">
+            <div class="space-y-1.5">
+              <div class="flex justify-between items-center text-xs font-semibold text-slate-800">
                 <span>🛒 Servizi & Supermercati</span>
-                <span class="font-bold text-amber-600">{{ formData.ratingServices }} / 5 ⭐</span>
-              </label>
-              <div class="flex items-center gap-1 bg-white p-1.5 rounded-xl border border-amber-200 justify-between">
+                <span :class="['px-2 py-0.5 rounded-full font-bold text-[11px] text-white', getBarColor(formData.ratingServices)]">
+                  {{ formData.ratingServices }}/5
+                </span>
+              </div>
+              <div class="grid grid-cols-5 gap-1 bg-white p-1 rounded-xl border border-slate-200">
                 <button
                   type="button"
-                  v-for="star in 5"
-                  :key="star"
-                  @click="formData.ratingServices = star"
-                  :class="['p-1 rounded-lg transition', star <= formData.ratingServices ? 'text-amber-500' : 'text-slate-300']"
+                  v-for="step in 5"
+                  :key="step"
+                  @click="formData.ratingServices = step"
+                  :class="[
+                    'h-6 rounded-lg transition-all font-bold text-[10px] flex items-center justify-center',
+                    step <= formData.ratingServices ? `${getBarColor(formData.ratingServices)} text-white` : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                  ]"
                 >
-                  <Star class="w-4 h-4 fill-current" />
+                  {{ step }}
                 </button>
               </div>
             </div>
 
             <!-- Rating 3: Stazione & Aeroporto -->
-            <div>
-              <label class="block text-xs font-semibold text-slate-800 mb-1 flex items-center justify-between">
-                <span>🚉 Stazione / Aeroporto</span>
-                <span class="font-bold text-amber-600">{{ formData.ratingTransport }} / 5 ⭐</span>
-              </label>
-              <div class="flex items-center gap-1 bg-white p-1.5 rounded-xl border border-amber-200 justify-between">
+            <div class="space-y-1.5">
+              <div class="flex justify-between items-center text-xs font-semibold text-slate-800">
+                <span>🚉 Stazione / Trasporti</span>
+                <span :class="['px-2 py-0.5 rounded-full font-bold text-[11px] text-white', getBarColor(formData.ratingTransport)]">
+                  {{ formData.ratingTransport }}/5
+                </span>
+              </div>
+              <div class="grid grid-cols-5 gap-1 bg-white p-1 rounded-xl border border-slate-200">
                 <button
                   type="button"
-                  v-for="star in 5"
-                  :key="star"
-                  @click="formData.ratingTransport = star"
-                  :class="['p-1 rounded-lg transition', star <= formData.ratingTransport ? 'text-amber-500' : 'text-slate-300']"
+                  v-for="step in 5"
+                  :key="step"
+                  @click="formData.ratingTransport = step"
+                  :class="[
+                    'h-6 rounded-lg transition-all font-bold text-[10px] flex items-center justify-center',
+                    step <= formData.ratingTransport ? `${getBarColor(formData.ratingTransport)} text-white` : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                  ]"
                 >
-                  <Star class="w-4 h-4 fill-current" />
+                  {{ step }}
                 </button>
               </div>
             </div>
+
           </div>
         </div>
 
@@ -395,7 +412,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
-import { X, Building, Euro, Wifi, Laptop, User, Link as LinkIcon, Image as ImageIcon, Upload, Plus, Trash2, Star } from 'lucide-vue-next';
+import { X, Building, Euro, Wifi, Laptop, User, Link as LinkIcon, Image as ImageIcon, Upload, Plus, Trash2, BarChart2 } from 'lucide-vue-next';
 import { Rental, Platform, UtilitiesType, CondoFeesType, StatusType, WifiType, WorkspaceType, ParkingType } from '../types/rental';
 
 const props = defineProps<{
@@ -414,6 +431,13 @@ const WORKSPACE_TYPES: WorkspaceType[] = ['Scrivania dedicata', 'Tavolo grande',
 const PARKING_TYPES: ParkingType[] = ['Posto auto riservato', 'Box / Garage privato', 'Parcheggio libero in strada', 'Parcheggio a pagamento', 'Nessun parcheggio'];
 
 const imageUrlInput = ref('');
+
+const getBarColor = (score: number) => {
+  if (score <= 2) return 'bg-rose-500';
+  if (score === 3) return 'bg-amber-500';
+  if (score === 4) return 'bg-emerald-500';
+  return 'bg-indigo-600';
+};
 
 const formData = reactive<any>({
   title: '',

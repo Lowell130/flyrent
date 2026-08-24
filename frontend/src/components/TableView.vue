@@ -89,16 +89,46 @@
                 <div v-if="rental.address" class="text-xs text-slate-400 truncate">{{ rental.address }}</div>
               </td>
 
-              <!-- Scoreboard Zona (Gradimento, Servizi, Trasporti) -->
-              <td class="px-4 py-3.5">
-                <div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 font-bold text-xs">
-                  <Star class="w-3.5 h-3.5 text-amber-500 fill-amber-500 shrink-0" />
-                  <span>{{ calculateAvgRating(rental) }}</span>
+              <!-- Scoreboard Zona con Barre Colorate -->
+              <td class="px-4 py-3.5 w-44">
+                <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-white font-bold text-xs mb-1.5 shadow-sm" :class="getBarColor(Number(calculateAvgRating(rental)))">
+                  <BarChart2 class="w-3.5 h-3.5 shrink-0" />
+                  <span>Score {{ calculateAvgRating(rental) }} / 5</span>
                 </div>
-                <div class="text-[10px] text-slate-400 mt-1 space-y-0.5">
-                  <div>🏡 Quartiere: <span class="font-semibold text-slate-700">{{ rental.ratingNeighborhood || 3 }}/5</span></div>
-                  <div>🛒 Servizi: <span class="font-semibold text-slate-700">{{ rental.ratingServices || 3 }}/5</span></div>
-                  <div>🚉 Trasporti: <span class="font-semibold text-slate-700">{{ rental.ratingTransport || 3 }}/5</span></div>
+                
+                <div class="space-y-1 text-[10px] text-slate-500">
+                  <!-- Bar Quartiere -->
+                  <div>
+                    <div class="flex justify-between items-center mb-0.5">
+                      <span>🏡 Quartiere</span>
+                      <span class="font-bold text-slate-700">{{ rental.ratingNeighborhood || 3 }}/5</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div :class="['h-full rounded-full transition-all', getBarColor(rental.ratingNeighborhood || 3)]" :style="{ width: `${((rental.ratingNeighborhood || 3) / 5) * 100}%` }"></div>
+                    </div>
+                  </div>
+
+                  <!-- Bar Servizi -->
+                  <div>
+                    <div class="flex justify-between items-center mb-0.5">
+                      <span>🛒 Servizi</span>
+                      <span class="font-bold text-slate-700">{{ rental.ratingServices || 3 }}/5</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div :class="['h-full rounded-full transition-all', getBarColor(rental.ratingServices || 3)]" :style="{ width: `${((rental.ratingServices || 3) / 5) * 100}%` }"></div>
+                    </div>
+                  </div>
+
+                  <!-- Bar Trasporti -->
+                  <div>
+                    <div class="flex justify-between items-center mb-0.5">
+                      <span>🚉 Trasporti</span>
+                      <span class="font-bold text-slate-700">{{ rental.ratingTransport || 3 }}/5</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div :class="['h-full rounded-full transition-all', getBarColor(rental.ratingTransport || 3)]" :style="{ width: `${((rental.ratingTransport || 3) / 5) * 100}%` }"></div>
+                    </div>
+                  </div>
                 </div>
               </td>
 
@@ -201,7 +231,7 @@
 import { ref, computed } from 'vue';
 import { Rental, StatusType } from '../types/rental';
 import ImageGalleryModal from './ImageGalleryModal.vue';
-import { ExternalLink, Edit, Trash2, MessageSquare, Wifi, Laptop, MapPin, ArrowUpDown, Image as ImageIcon, Car, Star } from 'lucide-vue-next';
+import { ExternalLink, Edit, Trash2, MessageSquare, Wifi, Laptop, MapPin, ArrowUpDown, Image as ImageIcon, Car, BarChart2 } from 'lucide-vue-next';
 
 const props = defineProps<{
   rentals: Rental[];
@@ -218,6 +248,13 @@ const sortAsc = ref(false);
 const galleryImages = ref<string[]>([]);
 const galleryTitle = ref('');
 const isGalleryOpen = ref(false);
+
+const getBarColor = (score: number) => {
+  if (score <= 2) return 'bg-rose-500';
+  if (score < 3.5) return 'bg-amber-500';
+  if (score < 4.5) return 'bg-emerald-500';
+  return 'bg-indigo-600';
+};
 
 const calculateAvgRating = (rental: Rental) => {
   const n = rental.ratingNeighborhood ?? 3;
