@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from typing import List, Optional
+from typing import List, Optional, Union, Dict, Any
 from datetime import datetime
 from bson import ObjectId
 
 from database import rentals_collection
-from models import RentalCreate, RentalUpdate, RentalResponse, UserResponse
+from models import RentalCreate, RentalUpdate, RentalResponse
 from routers.auth import get_current_user
 
 router = APIRouter(prefix="/api/rentals", tags=["Rentals"])
@@ -44,14 +44,18 @@ async def get_rentals(
 @router.post("", response_model=RentalResponse, status_code=status.HTTP_201_CREATED)
 async def create_rental(
     rental_in: RentalCreate,
-    current_user: Optional[UserResponse] = Depends(get_current_user)
+    current_user: Optional[Dict[str, Any]] = Depends(get_current_user)
 ):
     now = datetime.utcnow()
     rental_dict = rental_in.model_dump()
     rental_dict["createdAt"] = now
     rental_dict["updatedAt"] = now
+    
     if current_user:
-        rental_dict["owner_id"] = current_user.id
+        if isinstance(current_user, dict):
+            rental_dict["owner_id"] = current_user.get("_id") or current_user.get("id")
+        else:
+            rental_dict["owner_id"] = getattr(current_user, "id", None) or getattr(current_user, "_id", None)
 
     res = await rentals_collection.insert_one(rental_dict)
     created = await rentals_collection.find_one({"_id": res.inserted_id})
@@ -70,7 +74,7 @@ async def get_rental(rental_id: str):
 async def update_rental(
     rental_id: str,
     rental_in: RentalUpdate,
-    current_user: Optional[UserResponse] = Depends(get_current_user)
+    current_user: Optional[Dict[str, Any]] = Depends(get_current_user)
 ):
     if not ObjectId.is_valid(rental_id):
         raise HTTPException(status_code=400, detail="Invalid ID format")
@@ -90,7 +94,7 @@ async def update_rental(
 @router.delete("/{rental_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_rental(
     rental_id: str,
-    current_user: Optional[UserResponse] = Depends(get_current_user)
+    current_user: Optional[Dict[str, Any]] = Depends(get_current_user)
 ):
     if not ObjectId.is_valid(rental_id):
         raise HTTPException(status_code=400, detail="Invalid ID format")
