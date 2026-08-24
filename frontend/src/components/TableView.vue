@@ -16,7 +16,7 @@
                   Città / Zona <ArrowUpDown class="w-3 h-3" />
                 </div>
               </th>
-              <th class="px-4 py-3.5">Score Zona</th>
+              <th class="px-4 py-3.5 text-center">Score Zona</th>
               <th class="px-4 py-3.5 cursor-pointer hover:text-slate-900" @click="handleSort('monthlyPrice')">
                 <div class="flex items-center gap-1">
                   Canone / Mese <ArrowUpDown class="w-3 h-3" />
@@ -89,46 +89,19 @@
                 <div v-if="rental.address" class="text-xs text-slate-400 truncate">{{ rental.address }}</div>
               </td>
 
-              <!-- Scoreboard Zona con Barre Colorate -->
-              <td class="px-4 py-3.5 w-44">
-                <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-white font-bold text-xs mb-1.5 shadow-sm" :class="getBarColor(Number(calculateAvgRating(rental)))">
-                  <BarChart2 class="w-3.5 h-3.5 shrink-0" />
-                  <span>Score {{ calculateAvgRating(rental) }} / 5</span>
+              <!-- Scoreboard Zona Pulito e Immediato -->
+              <td class="px-4 py-3.5 text-center">
+                <div
+                  :title="`🏡 Quartiere: ${rental.ratingNeighborhood || 3}/5 | 🛒 Servizi: ${rental.ratingServices || 3}/5 | 🚉 Trasporti: ${rental.ratingTransport || 3}/5`"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white font-black text-xs shadow-sm cursor-help transition hover:scale-105"
+                  :class="getScoreBadgeBg(Number(calculateAvgRating(rental)))"
+                >
+                  <BarChart2 class="w-3.5 h-3.5 shrink-0 opacity-90" />
+                  <span>{{ calculateAvgRating(rental) }}</span>
+                  <span class="text-[10px] font-normal opacity-80">/5</span>
                 </div>
-                
-                <div class="space-y-1 text-[10px] text-slate-500">
-                  <!-- Bar Quartiere -->
-                  <div>
-                    <div class="flex justify-between items-center mb-0.5">
-                      <span>🏡 Quartiere</span>
-                      <span class="font-bold text-slate-700">{{ rental.ratingNeighborhood || 3 }}/5</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                      <div :class="['h-full rounded-full transition-all', getBarColor(rental.ratingNeighborhood || 3)]" :style="{ width: `${((rental.ratingNeighborhood || 3) / 5) * 100}%` }"></div>
-                    </div>
-                  </div>
-
-                  <!-- Bar Servizi -->
-                  <div>
-                    <div class="flex justify-between items-center mb-0.5">
-                      <span>🛒 Servizi</span>
-                      <span class="font-bold text-slate-700">{{ rental.ratingServices || 3 }}/5</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                      <div :class="['h-full rounded-full transition-all', getBarColor(rental.ratingServices || 3)]" :style="{ width: `${((rental.ratingServices || 3) / 5) * 100}%` }"></div>
-                    </div>
-                  </div>
-
-                  <!-- Bar Trasporti -->
-                  <div>
-                    <div class="flex justify-between items-center mb-0.5">
-                      <span>🚉 Trasporti</span>
-                      <span class="font-bold text-slate-700">{{ rental.ratingTransport || 3 }}/5</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                      <div :class="['h-full rounded-full transition-all', getBarColor(rental.ratingTransport || 3)]" :style="{ width: `${((rental.ratingTransport || 3) / 5) * 100}%` }"></div>
-                    </div>
-                  </div>
+                <div class="text-[10px] font-semibold text-slate-500 mt-1">
+                  {{ getScoreLabel(Number(calculateAvgRating(rental))) }}
                 </div>
               </td>
 
@@ -249,18 +222,27 @@ const galleryImages = ref<string[]>([]);
 const galleryTitle = ref('');
 const isGalleryOpen = ref(false);
 
-const getBarColor = (score: number) => {
-  if (score <= 2) return 'bg-rose-500';
-  if (score < 3.5) return 'bg-amber-500';
-  if (score < 4.5) return 'bg-emerald-500';
-  return 'bg-indigo-600';
-};
-
 const calculateAvgRating = (rental: Rental) => {
   const n = rental.ratingNeighborhood ?? 3;
   const s = rental.ratingServices ?? 3;
   const t = rental.ratingTransport ?? 3;
   return ((n + s + t) / 3).toFixed(1);
+};
+
+const getScoreBadgeBg = (score: number) => {
+  if (score >= 4.5) return 'bg-emerald-600';
+  if (score >= 3.8) return 'bg-teal-600';
+  if (score >= 3.0) return 'bg-indigo-600';
+  if (score >= 2.0) return 'bg-amber-500';
+  return 'bg-rose-500';
+};
+
+const getScoreLabel = (score: number) => {
+  if (score >= 4.5) return 'Eccellente';
+  if (score >= 3.8) return 'Ottima Zona';
+  if (score >= 3.0) return 'Buona Zona';
+  if (score >= 2.0) return 'Discreta';
+  return 'Zona Scarsa';
 };
 
 const handleSort = (field: keyof Rental) => {
