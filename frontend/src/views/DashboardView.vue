@@ -120,18 +120,50 @@
           </button>
         </div>
 
-        <div class="flex items-center gap-2">
-          <span class="text-slate-500 font-semibold">Budget max:</span>
-          <select
-            v-model.number="maxPriceFilter"
-            class="bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option :value="0">Tutti i prezzi</option>
-            <option :value="500">Fino a 500€</option>
-            <option :value="600">Fino a 600€</option>
-            <option :value="750">Fino a 750€</option>
-            <option :value="1000">Fino a 1000€</option>
-          </select>
+        <div class="flex items-center gap-4 flex-wrap">
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-500 font-semibold flex items-center gap-1">
+              <Calendar class="w-3.5 h-3.5 text-indigo-600" /> Permanenza:
+            </span>
+            <select
+              v-model.number="stayMonths"
+              class="bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option v-for="m in 36" :key="m" :value="m">
+                {{ m }} {{ m === 1 ? 'Mese' : 'Mesi' }}
+                <template v-if="m === 3"> (Trimestre)</template>
+                <template v-else-if="m === 6"> (Semestre)</template>
+                <template v-else-if="m === 10"> (Anno Accademico)</template>
+                <template v-else-if="m === 12"> (1 Anno)</template>
+                <template v-else-if="m === 24"> (2 Anni)</template>
+                <template v-else-if="m === 36"> (3 Anni)</template>
+              </option>
+            </select>
+            <input
+              type="number"
+              min="1"
+              max="36"
+              v-model.number="stayMonths"
+              class="w-16 bg-slate-50 border border-slate-300 rounded-xl px-2 py-1 font-bold text-center text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              title="Inserisci numero di mesi da 1 a 36"
+            />
+            <span class="text-slate-500 font-semibold text-xs">mesi</span>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-500 font-semibold">Budget max:</span>
+            <select
+              v-model.number="maxPriceFilter"
+              class="bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option :value="0">Tutti i prezzi</option>
+              <option :value="400">Fino a 400€</option>
+              <option :value="500">Fino a 500€</option>
+              <option :value="600">Fino a 600€</option>
+              <option :value="750">Fino a 750€</option>
+              <option :value="1000">Fino a 1000€</option>
+            </select>
+          </div>
         </div>
 
       </div>
@@ -177,6 +209,7 @@
         <TableView
           v-if="viewMode === 'table'"
           :rentals="filteredRentals"
+          :stayMonths="stayMonths"
           @statusChange="handleStatusChange"
           @edit="openEditModal"
           @delete="handleDelete"
@@ -186,6 +219,7 @@
         <KanbanView
           v-else
           :rentals="filteredRentals"
+          :stayMonths="stayMonths"
           @statusChange="handleStatusChange"
           @edit="openEditModal"
           @delete="handleDelete"
@@ -229,7 +263,7 @@ import QuickMessageModal from '../components/QuickMessageModal.vue';
 import MapViewModal from '../components/MapViewModal.vue';
 import { Rental, StatusType } from '../types/rental';
 import { api } from '../services/api';
-import { Building, Sparkles, Euro, Wifi, Laptop, Filter, Car, Star } from 'lucide-vue-next';
+import { Building, Sparkles, Euro, Wifi, Laptop, Filter, Car, Star, Calendar } from 'lucide-vue-next';
 
 const router = useRouter();
 
@@ -240,6 +274,17 @@ const selectedCity = ref('');
 const loading = ref(true);
 const error = ref<string | null>(null);
 const user = ref<any>(null);
+
+// Permanenza selezionata (in mesi: 1 - 36)
+const stayMonths = ref(6);
+
+watch(stayMonths, (newVal) => {
+  if (typeof newVal !== 'number' || isNaN(newVal) || newVal < 1) {
+    stayMonths.value = 1;
+  } else if (newVal > 36) {
+    stayMonths.value = 36;
+  }
+});
 
 // Quick Filter states
 const onlyFibra = ref(false);

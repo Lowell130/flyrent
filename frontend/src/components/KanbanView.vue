@@ -126,9 +126,9 @@
                 </span>
               </div>
               <div class="flex justify-between items-center text-[11px] pt-1.5 border-t border-slate-200">
-                <span class="text-slate-600 font-semibold">Totale 2 mesi:</span>
+                <span class="text-slate-600 font-semibold">Totale {{ getRentalMonths(rental) }} mesi:</span>
                 <span class="font-black text-slate-900">
-                  {{ (rental.monthlyPrice + (rental.utilitiesPriceEstimate || 0) + (rental.condoFeesPriceEstimate || 0)) * 2 }}€
+                  {{ (rental.monthlyPrice + (rental.utilitiesPriceEstimate || 0) + (rental.condoFeesPriceEstimate || 0)) * getRentalMonths(rental) }}€
                 </span>
               </div>
             </div>
@@ -189,9 +189,15 @@ import { Rental, StatusType } from '../types/rental';
 import ImageGalleryModal from './ImageGalleryModal.vue';
 import { Wifi, Laptop, MapPin, ExternalLink, MessageSquare, Edit, Trash2, Calendar, Image as ImageIcon, Car, BarChart2, Compass } from 'lucide-vue-next';
 
-const props = defineProps<{
-  rentals: Rental[];
-}>();
+const props = withDefaults(
+  defineProps<{
+    rentals: Rental[];
+    stayMonths?: number;
+  }>(),
+  {
+    stayMonths: 6
+  }
+);
 
 defineEmits(['statusChange', 'edit', 'delete', 'openQuickMessage', 'openMap']);
 
@@ -208,6 +214,19 @@ const COLUMNS: { id: StatusType; title: string; borderColor: string; badgeBg: st
 const galleryImages = ref<string[]>([]);
 const galleryTitle = ref('');
 const isGalleryOpen = ref(false);
+
+const getRentalMonths = (rental: Rental) => {
+  if (rental.availablePeriod) {
+    const match = rental.availablePeriod.match(/(\d+)/);
+    if (match && match[1]) {
+      const parsed = parseInt(match[1], 10);
+      if (parsed > 0 && parsed <= 36) {
+        return parsed;
+      }
+    }
+  }
+  return props.stayMonths || 6;
+};
 
 const getScoreBadgeBg = (score: number) => {
   if (score >= 4.5) return 'bg-emerald-600';

@@ -211,13 +211,33 @@
             </div>
 
             <div class="md:col-span-3">
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Periodo Disponibilità</label>
-              <input
-                type="text"
-                placeholder="es. 1 Ottobre - 30 Novembre (2 mesi)"
-                v-model="formData.availablePeriod"
-                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Periodo Disponibilità / Durata Contratto</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <select
+                  v-model="selectedPeriodPreset"
+                  @change="handlePeriodPresetChange"
+                  class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                >
+                  <option value="">-- Seleziona Mesi / Durata --</option>
+                  <option v-for="m in 36" :key="m" :value="getPresetLabel(m)">
+                    {{ m }} {{ m === 1 ? 'Mese' : 'Mesi' }}
+                    <template v-if="m === 3"> (Trimestre)</template>
+                    <template v-else-if="m === 6"> (Semestre)</template>
+                    <template v-else-if="m === 10"> (Anno Accademico)</template>
+                    <template v-else-if="m === 12"> (1 Anno)</template>
+                    <template v-else-if="m === 24"> (2 Anni)</template>
+                    <template v-else-if="m === 36"> (3 Anni)</template>
+                  </option>
+                  <option value="Flessibile / Personalizzato">Flessibile / Personalizzato</option>
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="es. 6 Mesi (Ottobre - Marzo) o specificare date"
+                  v-model="formData.availablePeriod"
+                  class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -439,6 +459,24 @@ const PARKING_TYPES: ParkingType[] = ['Posto auto riservato', 'Box / Garage priv
 
 const imageUrlInput = ref('');
 const isCompressing = ref(false);
+const selectedPeriodPreset = ref('');
+
+const getPresetLabel = (m: number) => {
+  let label = `${m} ${m === 1 ? 'Mese' : 'Mesi'}`;
+  if (m === 3) label += ' (Trimestre)';
+  else if (m === 6) label += ' (Semestre)';
+  else if (m === 10) label += ' (Anno Accademico)';
+  else if (m === 12) label += ' (1 Anno)';
+  else if (m === 24) label += ' (2 Anni)';
+  else if (m === 36) label += ' (3 Anni)';
+  return label;
+};
+
+const handlePeriodPresetChange = () => {
+  if (selectedPeriodPreset.value && selectedPeriodPreset.value !== 'Flessibile / Personalizzato') {
+    formData.availablePeriod = selectedPeriodPreset.value;
+  }
+};
 
 const getBarColor = (score: number) => {
   if (score <= 2) return 'bg-rose-500';
@@ -466,7 +504,7 @@ const formData = reactive<any>({
   ratingNeighborhood: 3,
   ratingServices: 3,
   ratingTransport: 3,
-  availablePeriod: '2 Mesi',
+  availablePeriod: '6 Mesi (Semestre)',
   contactName: '',
   contactPhone: '',
   notes: '',
@@ -497,7 +535,7 @@ watch([() => props.isOpen, () => props.initialData], ([isOpenVal, initialDataVal
       ratingNeighborhood: initialDataVal.ratingNeighborhood ?? 3,
       ratingServices: initialDataVal.ratingServices ?? 3,
       ratingTransport: initialDataVal.ratingTransport ?? 3,
-      availablePeriod: initialDataVal.availablePeriod || '',
+      availablePeriod: initialDataVal.availablePeriod || '6 Mesi (Semestre)',
       contactName: initialDataVal.contactName || '',
       contactPhone: initialDataVal.contactPhone || '',
       notes: initialDataVal.notes || '',
@@ -523,13 +561,14 @@ watch([() => props.isOpen, () => props.initialData], ([isOpenVal, initialDataVal
       ratingNeighborhood: 3,
       ratingServices: 3,
       ratingTransport: 3,
-      availablePeriod: '2 Mesi',
+      availablePeriod: '6 Mesi (Semestre)',
       contactName: '',
       contactPhone: '',
       notes: '',
       images: []
     });
   }
+  selectedPeriodPreset.value = formData.availablePeriod || '';
 }, { immediate: true, deep: true });
 
 const handleAddImageUrl = () => {

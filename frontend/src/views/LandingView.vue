@@ -38,19 +38,19 @@
         
         <!-- Badge -->
         <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold px-3.5 py-1.5 rounded-full mb-6 shadow-sm">
-          <Wifi class="w-4 h-4 text-indigo-600" />
-          <span>Il Tracciatore N.1 per Smart Worker in Italia</span>
+          <GraduationCap class="w-4 h-4 text-indigo-600" />
+          <span>L'Organizer per Studenti e Lavoratori Fuori Sede</span>
         </div>
 
         <!-- Main Headline -->
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6">
-          Lavora da ovunque.<br class="hidden sm:inline" /> Organizza la tua casa ideale in Italia.
+          Trova la tua stanza o casa ideale.<br class="hidden sm:inline" /> Organizza annunci e costi per il tuo periodo.
         </h1>
 
         <!-- Subtitle -->
         <p class="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-          Smetti di perdere il filo tra annunci su Facebook, Subito, Idealista e Immobiliare. 
-          Confronta in un unico posto connessione Fibra, postazione di lavoro, prezzi reali per 2 mesi e stato dei contatti.
+          Smetti di perdere il filo tra gruppi Facebook, Subito, Idealista e Immobiliare. 
+          Confronta in un unico posto stanze singole, appartamenti, connessione Wi-Fi, postazione studio/lavoro e calcola il budget reale per i mesi che ti servono.
         </p>
 
         <!-- CTA Buttons -->
@@ -80,8 +80,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="text-center mb-16">
-          <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Tutto ciò che serve ad uno Smart Worker</h2>
-          <p class="text-sm text-slate-500 mt-2">Progettato per chi lavora da remoto e cerca affitti a breve/medio termine.</p>
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Progettato per chi deve trasferirsi o cambiare casa</h2>
+          <p class="text-sm text-slate-500 mt-2">La soluzione ideale per studenti universitari, stagisti e lavoratori da remoto.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -93,7 +93,7 @@
             </div>
             <h3 class="font-bold text-lg text-slate-900 mb-2">Vista Tabella & Kanban</h3>
             <p class="text-sm text-slate-600 leading-relaxed">
-              Organizza gli annunci in una griglia ordinabile o sposta le schede da "Contattato" a "In Attesa" e "Confermato".
+              Organizza gli annunci di stanze o appartamenti in una griglia ordinabile o sposta le schede da "Contattato" a "Visita" e "Confermato".
             </p>
           </div>
 
@@ -102,20 +102,20 @@
             <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center mb-4 border border-cyan-100">
               <Wifi class="w-6 h-6" />
             </div>
-            <h3 class="font-bold text-lg text-slate-900 mb-2">Smart Work Check</h3>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">Wi-Fi & Scrivania Check</h3>
             <p class="text-sm text-slate-600 leading-relaxed">
-              Traccia se l'appartamento dispone di Fibra FTTH 1Gbps, FTTC o FWA e se è presente una vera scrivania di lavoro.
+              Traccia se l'alloggio dispone di Fibra veloce per le tue lezioni o smart working e se è presente una vera scrivania per studiare o lavorare.
             </p>
           </div>
 
           <!-- Feature 3 -->
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
             <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4 border border-emerald-100">
-              <Euro class="w-6 h-6" />
+              <Calendar class="w-6 h-6" />
             </div>
-            <h3 class="font-bold text-lg text-slate-900 mb-2">Calcolo Costo Reale 2 Mesi</h3>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">Durata Soggiorno Personalizzata</h3>
             <p class="text-sm text-slate-600 leading-relaxed">
-              Calcola in automatico il costo effettivo sommando canone mensile, stima delle utenze e caparra richiesta.
+              Scegli tu il periodo (1 mese, 6 mesi per un semestre, 10 mesi per l'anno accademico o 12 mesi) e calcola il budget reale compreso di utenze e spesa condominiale.
             </p>
           </div>
 
@@ -126,7 +126,7 @@
             </div>
             <h3 class="font-bold text-lg text-slate-900 mb-2">Messaggi WhatsApp Rapidi</h3>
             <p class="text-sm text-slate-600 leading-relaxed">
-              Genera con un click un messaggio formale e chiaro da inviare ai proprietari su WhatsApp chiedendo disponibilità e Wi-Fi.
+              Genera con un click un messaggio formale e chiaro da inviare ai locatori o coinquilini chiedendo disponibilità, spese e condizioni di soggiorno.
             </p>
           </div>
 
@@ -137,7 +137,7 @@
             </div>
             <h3 class="font-bold text-lg text-slate-900 mb-2">Galleria Foto & Screenshot</h3>
             <p class="text-sm text-slate-600 leading-relaxed">
-              Molti annunci su Facebook non hanno foto. Puoi caricare le immagini inviate in chat o fare uno screenshot.
+              Molti annunci nei gruppi universitari su Facebook o WhatsApp non hanno foto chiare. Carica e raggruppa tutti gli scatti ricevuti.
             </p>
           </div>
 
@@ -148,7 +148,7 @@
             </div>
             <h3 class="font-bold text-lg text-slate-900 mb-2">Sincronizzazione Cloud</h3>
             <p class="text-sm text-slate-600 leading-relaxed">
-              Tutti i dati sono salvati al sicuro nel database cloud. Accedi da qualsiasi computer o smartphone ed hai tutto sincronizzato.
+              Tutti i tuoi annunci salvati sono sempre accessibili dal tuo smartphone o laptop, sincronizzati in sicurezza nel cloud.
             </p>
           </div>
 
@@ -164,7 +164,7 @@
           <Plane class="w-4 h-4 text-indigo-600 transform -rotate-45" /> FlyRent © 2026
         </div>
         <div>
-          Tracciatore per Smart Working in Italia. Sincronizzato con MongoDB Atlas.
+          Organizer per Studenti e Lavoratori in Italia. Sincronizzato con MongoDB Atlas.
         </div>
       </div>
     </footer>
@@ -173,5 +173,5 @@
 </template>
 
 <script setup lang="ts">
-import { Plane, Wifi, ArrowRight, Sparkles, Table, Euro, MessageSquare, Image as ImageIcon, ShieldCheck } from 'lucide-vue-next';
+import { Plane, Wifi, ArrowRight, Sparkles, Table, MessageSquare, Image as ImageIcon, ShieldCheck, GraduationCap, Calendar } from 'lucide-vue-next';
 </script>

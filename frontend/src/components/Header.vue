@@ -13,7 +13,7 @@
           <div class="flex items-center gap-2">
             <h1 class="text-lg font-black text-slate-900 tracking-tight">FlyRent</h1>
             <span class="bg-indigo-50 text-indigo-700 text-[11px] px-2.5 py-0.5 rounded-full font-bold border border-indigo-200 flex items-center gap-1">
-              <Wifi class="w-3 h-3 text-indigo-600" /> Smart Work Tracker
+              <GraduationCap class="w-3.5 h-3.5 text-indigo-600" /> Student & Worker Organizer
             </span>
           </div>
         </router-link>
@@ -151,7 +151,7 @@
 </template>
 
 <script setup lang="ts">
-import { Plane, Wifi, Search, Table, LayoutGrid, Database, Plus, LogOut, LogIn, Download } from 'lucide-vue-next';
+import { Plane, GraduationCap, Search, Table, LayoutGrid, Database, Plus, LogOut, LogIn, Download } from 'lucide-vue-next';
 
 defineProps<{
   viewMode: 'kanban' | 'table';
